@@ -4,7 +4,12 @@ from ..geometry_creator import create_geometry
 
 
 # iterator for grid geometries
-def next_grid_geometry():
+# @params: bbox[minx, miny, maxx, maxy]
+#   bounding box in crs 3857
+def next_grid_geometry(
+        bbox=[-20026400, -20500000, 20026400, 20500000],
+):
+    # id 1 bbox [-19840000.0, -20480000.0, -19776000.0, -20416000.0]
     _count = 0
     for size in size_list:
         dx = dy = size
@@ -15,6 +20,17 @@ def next_grid_geometry():
                 xmax = xmin + dx
                 ymax = ymin + dy
                 _count += 1 # id
+
+                if (
+                    (xmin < bbox[0] or xmin > bbox[2])
+                    and (xmax < bbox[0] or xmax > bbox[2])
+                ):
+                    continue
+                if (
+                    (ymin < bbox[1] or ymin > bbox[3])
+                    and (ymax < bbox[1] or ymax > bbox[3])
+                ):
+                    continue
 
                 yield {
                     'gfx_id': _count,
